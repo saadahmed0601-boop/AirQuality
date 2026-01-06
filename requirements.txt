@@ -4,4 +4,5 @@ scikit-learn==1.8.0
 matplotlib==3.10.8
 joblib==1.5.3
 flask==3.0.0
+streamlit==1.52.2
 python-dateutil==2.9.0.post0

@@ -38,30 +38,28 @@ source myvenv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-## Usage
+## Streamlit Web App
 
-### Training the Model
+A user-friendly web interface is available for interactive predictions:
 
-Run the main training script:
+### Running the Web App
+
 ```bash
-python main.py
+# Activate virtual environment
+.\myvenv\Scripts\Activate.ps1  # Windows
+
+# Run the Streamlit app
+streamlit run streamlit_app.py
 ```
 
-This will:
-- Load and preprocess the data
-- Train the model with hyperparameter tuning
-- Perform feature optimization
-- Generate evaluation plots
-- Save the trained model and scaler
+The app will be available at `http://localhost:8501`
 
-### Making Predictions
-
-Use the prediction script:
-```bash
-python run_model.py
-```
-
-Or use the API (see deployment section).
+### Features
+- **Interactive input** for all 12 air quality features
+- **Real-time predictions** with interpretation
+- **Model insights** including feature importance
+- **Performance metrics** display
+- **Data information** and documentation
 
 ### Model Evaluation
 
