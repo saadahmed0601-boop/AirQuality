@@ -7,9 +7,16 @@ import matplotlib.pyplot as plt
 # Load the trained model and scaler
 @st.cache_resource
 def load_model():
-    model = joblib.load('air_quality_model.pkl')
-    scaler = joblib.load('scaler.pkl')
-    return model, scaler
+    try:
+        model = joblib.load('air_quality_model.pkl')
+        scaler = joblib.load('scaler.pkl')
+        return model, scaler
+    except FileNotFoundError as e:
+        st.error(f"Model file not found: {e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        st.stop()
 
 model, scaler = load_model()
 
@@ -93,14 +100,33 @@ with col1:
 
     # Prediction button
     if st.button('🚀 Predict CO(GT)', type='primary'):
-        # Prepare input for model
-        features_array = np.array([input_data[feat] for feat in features]).reshape(1, -1)
-        features_scaled = scaler.transform(features_array)
-        prediction = model.predict(features_scaled)[0]
+        # Validate inputs
+        invalid_inputs = []
+        for feat, val in input_data.items():
+            if val < 0:
+                invalid_inputs.append(f"{feat}: {val} (must be non-negative)")
+        
+        if invalid_inputs:
+            st.error("Invalid input values detected:")
+            for msg in invalid_inputs:
+                st.error(f"• {msg}")
+            st.error("Please enter valid non-negative values.")
+        else:
+            try:
+                # Prepare input for model
+                features_array = np.array([input_data[feat] for feat in features]).reshape(1, -1)
+                # Create DataFrame with feature names to avoid sklearn warnings
+                features_df = pd.DataFrame(features_array, columns=features)
+                features_scaled = scaler.transform(features_df)
+                prediction = model.predict(features_scaled)[0]
 
-        # Store prediction for display
-        st.session_state.prediction = prediction
-        st.session_state.input_data = input_data.copy()
+                # Store prediction for display
+                st.session_state.prediction = prediction
+                st.session_state.input_data = input_data.copy()
+                
+            except Exception as e:
+                st.error(f"Error making prediction: {e}")
+                st.error("Please check your input values and try again.")
 
 with col2:
     st.header('📈 Prediction Result')
